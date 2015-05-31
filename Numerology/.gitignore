@@ -1,0 +1,7 @@
+.eunit/
+.rebar/
+ebin/
+*~
+src/*.app.src
+src/*_sup.erl
+src/*_app.erl
