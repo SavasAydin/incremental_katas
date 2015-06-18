@@ -61,7 +61,7 @@ perform_command("TL",State) ->
     Position = get_robot_position(State),
     turn_left(Position,State).
 
-get_robot_position([{_," "}|Rest]=State) ->
+get_robot_position([{_," "}|Rest]) ->
     get_robot_position(Rest);
 get_robot_position([H|_]) ->
     H.
@@ -92,8 +92,10 @@ turn_right({Key,Direction},State) ->
 
 turn_left({Key,Direction},State) ->
     NewDirection = proplists:get_value(Direction, [{"N","W"},
-					     {"E","N"}
-					    ]),
+						   {"E","N"},
+						   {"W","S"},
+						   {"S","E"}
+						  ]),
     update_position(Key,NewDirection,State).
 
 update_position(Key,Value,State) ->
