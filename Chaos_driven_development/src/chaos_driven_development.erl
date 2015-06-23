@@ -1,24 +1,24 @@
 -module(chaos_driven_development).
 
--export([visualize_game_state/0]).
+-export([visualize_game_state/1]).
 
 -define(COMMANDS_FILE, "/tmp/commands.txt").
 -define(STATES_FILE, "/tmp/states.txt").
 
-visualize_game_state() ->
-    M = initialize_robot_in_matrix(),
+visualize_game_state(Dimension) ->
+    M = initialize_robot_in_matrix(Dimension),
     Commands = read_commands(),
     perform_commands(Commands,M).
 
-initialize_robot_in_matrix() ->
-    M = create_matrix(),
+initialize_robot_in_matrix(Dimension) ->
+    M = create_matrix(Dimension),
     NewM = init_place_of_robot(M),    
     Res = visualize_state(NewM),
     ok = write_states(Res),
     NewM.
 
-create_matrix() ->
-    [ {{X,Y},Z} || X <- [1,2], Y <- [1,2], Z <- [" "] ].
+create_matrix({N,M}) ->
+    [ {{X,Y},Z} || X <- lists:seq(1,N), Y <- lists:seq(1,M), Z <- [" "] ].
 
 init_place_of_robot(M) ->
     lists:keyreplace({2,2}, 1, M, {{2,2}, "N"}).

@@ -2,6 +2,8 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+-define(MATRIX_2_X_2, {2,2}).
+
 state_test_() ->
     {foreach,
      fun setup/0,
@@ -24,14 +26,14 @@ state_test_() ->
     }.
 
 initial_state_if_no_command() ->
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n">>, Bin).       
 
 drive_forward() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"DF">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][N]\n[ ][ ]\n">>, Bin).  
@@ -39,7 +41,7 @@ drive_forward() ->
 drive_forward_and_drive_backward() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"DF\nDB">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][N]\n[ ][ ]\n"
@@ -48,7 +50,7 @@ drive_forward_and_drive_backward() ->
 drive_forward_and_turn_right() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"DF\nTR">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][N]\n[ ][ ]\n"
@@ -57,7 +59,7 @@ drive_forward_and_turn_right() ->
 turn_right_and_turn_left() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"TR\n\TL">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][ ]\n[ ][E]\n"
@@ -66,7 +68,7 @@ turn_right_and_turn_left() ->
 drive_forward_turn_right_and_drive_backward() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"DF\nTR\nDB">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][N]\n[ ][ ]\n"
@@ -76,7 +78,7 @@ drive_forward_turn_right_and_drive_backward() ->
 turn_left_twice() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"TL\n\TL">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][ ]\n[ ][W]\n"
@@ -85,7 +87,7 @@ turn_left_twice() ->
 turn_left_three_times() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"TL\n\TL\nTL">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][ ]\n[ ][W]\n"
@@ -95,7 +97,7 @@ turn_left_three_times() ->
 turn_right_twice_and_drive_backward() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"TR\n\TR\nDB">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][ ]\n[ ][E]\n"
@@ -105,7 +107,7 @@ turn_right_twice_and_drive_backward() ->
 turn_right_three_times() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"TR\n\TR\nTR">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][ ]\n[ ][E]\n"
@@ -115,7 +117,7 @@ turn_right_three_times() ->
 turn_left_and_drive_forward() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"TL\nDF">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][ ]\n[ ][W]\n"
@@ -124,7 +126,7 @@ turn_left_and_drive_forward() ->
 turn_left_drive_forward_and_drive_backward() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"TL\nDF\nDB">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][ ]\n[ ][W]\n"
@@ -134,7 +136,7 @@ turn_left_drive_forward_and_drive_backward() ->
 turn_left_drive_forward_and_turn_right_drive_forward_three_times() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<"TL\nDF\nTR\nDF\nTR\nDF\nTR\nDF">>),
-    chaos_driven_development:visualize_game_state(),
+    chaos_driven_development:visualize_game_state(?MATRIX_2_X_2),
     {ok, Bin} = file:read_file("/tmp/states.txt"),
     ?assertEqual(<<"[ ][ ]\n[ ][N]\n"
 		   "[ ][ ]\n[ ][W]\n"
