@@ -3,6 +3,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 -define(MATRIX_2_X_2, {2,2}).
+-define(MATRIX_3_X_3, {3,3}).
 
 state_test_() ->
     {foreach,
@@ -21,7 +22,8 @@ state_test_() ->
       fun turn_right_twice_and_drive_backward/0,
       fun turn_left_and_drive_forward/0,
       fun turn_left_drive_forward_and_drive_backward/0,
-      fun turn_left_drive_forward_and_turn_right_drive_forward_three_times/0
+      fun turn_left_drive_forward_and_turn_right_drive_forward_three_times/0,
+      fun drive_forward_turn_left_drive_forward_twice_and_turn_right/0
      ]
     }.
 
@@ -149,7 +151,19 @@ turn_left_drive_forward_and_turn_right_drive_forward_three_times() ->
 		   "[ ][ ]\n[ ][S]\n">>, Bin).  
 
 
-    
+
+drive_forward_turn_left_drive_forward_twice_and_turn_right() ->
+    CommandsFile = "/tmp/commands.txt",
+    ok = file:write_file(CommandsFile, <<"DF\nTL\nDF\nDF\nTR">>),
+    chaos_driven_development:visualize_game_state(?MATRIX_3_X_3),
+    {ok, Bin} = file:read_file("/tmp/states.txt"),
+    ?assertEqual(<<"[ ][ ][ ]\n[ ][ ][ ]\n[ ][ ][N]\n"
+		   "[ ][ ][ ]\n[ ][ ][N]\n[ ][ ][ ]\n"
+		   "[ ][ ][ ]\n[ ][ ][W]\n[ ][ ][ ]\n"
+		   "[ ][ ][ ]\n[ ][W][ ]\n[ ][ ][ ]\n"
+		   "[ ][ ][ ]\n[W][ ][ ]\n[ ][ ][ ]\n"
+		   "[ ][ ][ ]\n[N][ ][ ]\n[ ][ ][ ]\n">>, Bin).  
+
 setup() ->
     CommandsFile = "/tmp/commands.txt",
     ok = file:write_file(CommandsFile, <<>>),

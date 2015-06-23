@@ -12,7 +12,7 @@ visualize_game_state(Dimension) ->
 
 initialize_robot_in_matrix(Dimension) ->
     M = create_matrix(Dimension),
-    NewM = init_place_of_robot(M),    
+    NewM = init_place_of_robot(M,Dimension),    
     Res = visualize_state(NewM),
     ok = write_states(Res),
     NewM.
@@ -20,8 +20,8 @@ initialize_robot_in_matrix(Dimension) ->
 create_matrix({N,M}) ->
     [ {{X,Y},Z} || X <- lists:seq(1,N), Y <- lists:seq(1,M), Z <- [" "] ].
 
-init_place_of_robot(M) ->
-    lists:keyreplace({2,2}, 1, M, {{2,2}, "N"}).
+init_place_of_robot(M,{X,Y}) ->
+    lists:keyreplace({X,Y}, 1, M, {{X,Y}, "N"}).
 
 read_commands() ->
     {ok, Bin} = file:read_file(?COMMANDS_FILE),
@@ -35,10 +35,16 @@ perform_commands(Commands,State) ->
 		end,
 		State,
 		Commands).
-			       
-visualize_state([{_,Dir1},{_,Dir2},{_,Dir3},{_,Dir4}]) ->   
-    generate_cell(Dir1) ++ generate_cell(Dir2) ++ generate_newline() ++
-	generate_cell(Dir3) ++ generate_cell(Dir4) ++ generate_newline().
+
+visualize_state(State) ->
+    generate_cells_and_newlines(State,round(math:sqrt(length(State))),1).
+
+generate_cells_and_newlines([],_,_) ->
+    [];
+generate_cells_and_newlines([{_,Dir}|T],TimeForNewline,NumberOfCellsInOneLine) when NumberOfCellsInOneLine rem TimeForNewline == 0 ->
+    generate_cell(Dir) ++ generate_newline() ++ generate_cells_and_newlines(T,TimeForNewline,TimeForNewline+1);
+generate_cells_and_newlines([{_,Dir}|T], TimeForNewline, NumberOfCellsInOneLine) ->
+    generate_cell(Dir) ++ generate_cells_and_newlines(T,TimeForNewline,NumberOfCellsInOneLine+1).
 
 generate_cell(Direction) ->
     "[" ++ Direction ++ "]".
