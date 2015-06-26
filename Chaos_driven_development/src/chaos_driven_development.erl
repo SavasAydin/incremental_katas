@@ -12,15 +12,14 @@ visualize_game_state(Dimension) ->
 
 initialize_robot_in_matrix(Dimension) ->
     M = create_matrix(Dimension),
-    NewM = init_place_of_robot(M,Dimension),    
-    Res = visualize_state(NewM),
-    ok = write_states(Res),
+    NewM = place_robot_in_matrix(M,Dimension),    
+    ok = store_state(NewM),
     NewM.
 
 create_matrix({N,M}) ->
     [ {{X,Y},Z} || X <- lists:seq(1,N), Y <- lists:seq(1,M), Z <- [" "] ].
 
-init_place_of_robot(M,{X,Y}) ->
+place_robot_in_matrix(M,{X,Y}) ->
     lists:keyreplace({X,Y}, 1, M, {{X,Y}, "N"}).
 
 read_commands() ->
@@ -29,28 +28,11 @@ read_commands() ->
 
 perform_commands(Commands,State) ->
     lists:foldl(fun(Command,S) -> NewState = perform_command(Command,S),
-				  Res = visualize_state(NewState),
-				  write_states(Res),
+				  store_state(NewState),
 				  NewState
 		end,
 		State,
 		Commands).
-
-visualize_state(State) ->
-    generate_cells_and_newlines(State,round(math:sqrt(length(State))),1).
-
-generate_cells_and_newlines([],_,_) ->
-    [];
-generate_cells_and_newlines([{_,Dir}|T],TimeForNewline,NumberOfCellsInOneLine) when NumberOfCellsInOneLine rem TimeForNewline == 0 ->
-    generate_cell(Dir) ++ generate_newline() ++ generate_cells_and_newlines(T,TimeForNewline,TimeForNewline+1);
-generate_cells_and_newlines([{_,Dir}|T], TimeForNewline, NumberOfCellsInOneLine) ->
-    generate_cell(Dir) ++ generate_cells_and_newlines(T,TimeForNewline,NumberOfCellsInOneLine+1).
-
-generate_cell(Direction) ->
-    "[" ++ Direction ++ "]".
-
-generate_newline() ->
-    "\n".
     
 perform_command([],State) ->
     State;
@@ -107,5 +89,23 @@ turn_left({Key,Direction},State) ->
 update_position(Key,Value,State) ->
     lists:keyreplace(Key, 1, State, {Key, Value}).
 
-write_states(Result) ->    
+store_state(State) ->
+    Result = visualize_state(State),
     file:write_file(?STATES_FILE, list_to_binary(Result), [append]).
+
+visualize_state(State) ->
+    Column = round(math:sqrt(length(State))),
+    visualize_state(State,Column).
+
+visualize_state([],_) ->
+    [];
+visualize_state([{{_,Column},_}=H|T],Column) ->
+    generate_cell(H) ++ generate_newline() ++ visualize_state(T,Column);
+visualize_state([H|T],Column) ->
+    generate_cell(H) ++ visualize_state(T,Column).
+
+generate_cell({_,X}) ->
+    "[" ++ X ++ "]".
+		
+generate_newline() ->
+    "\n".
