@@ -58,6 +58,9 @@ get_command_fun(Command) ->
 clear_out_old_position({Key,_},State) ->    
     update_position({Key," "},State).
 
+update_position({Coordinate,Direction},State) ->
+    lists:keyreplace(Coordinate, 1, State, {Coordinate, Direction}).
+
 move_forward({{X,Y},Direction}) ->
     Coordinate = proplists:get_value(Direction, [{"N",{X-1,Y}},
 						 {"W",{X,Y-1}},
@@ -86,23 +89,17 @@ turn_left({Coordinate,Direction}) ->
 						   {"S","E"}]),
     {Coordinate,NewDirection}.    
 
-update_position({Coordinate,Direction},State) ->
-    lists:keyreplace(Coordinate, 1, State, {Coordinate, Direction}).
-
 store_state(State) ->
-    Result = visualize_state(State),
-    file:write_file(?STATES_FILE, list_to_binary(Result), [append]).
-
-visualize_state(State) ->
     Column = round(math:sqrt(length(State))),
-    visualize_state(State,Column).
+    Res = generate_cells(State,Column),
+    file:write_file(?STATES_FILE, list_to_binary(Res), [append]).
 
-visualize_state([],_) ->
+generate_cells([],_) ->
     [];
-visualize_state([{{_,Column},_}=H|T],Column) ->
-    generate_cell(H) ++ generate_newline() ++ visualize_state(T,Column);
-visualize_state([H|T],Column) ->
-    generate_cell(H) ++ visualize_state(T,Column).
+generate_cells([{{_,Column},_}=H|T],Column) ->
+    generate_cell(H) ++ generate_newline() ++ generate_cells(T,Column);
+generate_cells([H|T],Column) ->
+    generate_cell(H) ++ generate_cells(T,Column).
 
 generate_cell({_,X}) ->
     "[" ++ X ++ "]".
